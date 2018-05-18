@@ -4,18 +4,22 @@ from flask_restful import Resource, Api
 # flask restful removes need for jsonify method
 
 app = Flask(__name__)
+app.secret_key = 'secretstuff'
 api = Api(app)
 
 items = []
 
 class Item(Resource):
     def get(self, name):
-        for item in items:
-            if item['name'] == name:
-                return item
-        return {'item': None}, 404 # Not Found
+        # Get first item matched by filter function, using next
+        # if no item found, return None and 404 error
+        item = next(filter(lambda x: x['name'] == name, items), None)
+        return {'item': item}, 200 if item else 404
 
     def post(self, name):
+        # If user tries to add same item name, returns message and error
+        if next(filter(lambda x: x['name'] == name, items), None) is not None:
+            return {'message': "An item with name {} already exists".format(name)}, 400
         data = request.get_json()
         item = {'name': name, 'price': data['price']}
         items.append(item)
