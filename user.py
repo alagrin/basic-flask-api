@@ -1,5 +1,5 @@
 class User:
-    """Create a user and valid user object to work with flask JWT"""
+    """Create a user, a valid user object to work with flask JWT"""
     def __init__(self, _id, username, password):
         self.id = _id
         self.username = username
